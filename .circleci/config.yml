@@ -54,13 +54,19 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
-      # Replace this with steps to deploy to users
+      - checkout
+      - run:
+          name: Print Working Directory
+          command: pwd
       - run:
           name: List Files
           command: ls -la
       - run:
-          name: deploy
-          command: ./build_push_image_karsajobs.sh
+          name: Make Script Executable
+          command: chmod +x build_push_image_karsajobs.sh
+      - run:
+          name: Deploy
+          command: ../build_push_image_karsajobs.sh
 workflows:
   build-and-test:
     jobs:
