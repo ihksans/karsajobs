@@ -66,7 +66,7 @@ jobs:
           command: chmod +x build_push_image_karsajobs.sh
       - run:
           name: Deploy
-          command: ../build_push_image_karsajobs.sh
+          command: build_push_image_karsajobs.sh
 workflows:
   build-and-test:
     jobs:
