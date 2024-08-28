@@ -50,20 +50,10 @@ jobs:
           path: ~/artifacts
           destination: executables
   deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
+    machine:
+      image: ubuntu-2204:2023.07.1
     steps:
       - checkout
-      - run:
-          name: Print Working Directory
-          command: pwd
-      - run:
-          name: List Files
-          command: ls -la
-      - run:
-          name: Make Script Executable
-          command: chmod +x build_push_image_karsajobs.sh
       - run:
           name: Deploy
           command: /home/circleci/project/build_push_image_karsajobs.sh
