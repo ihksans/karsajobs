@@ -56,6 +56,9 @@ jobs:
     steps:
       # Replace this with steps to deploy to users
       - run:
+          name: List Files
+          command: ls -la
+      - run:
           name: deploy
           command: ./build_push_image_karsajobs.sh
 workflows:
