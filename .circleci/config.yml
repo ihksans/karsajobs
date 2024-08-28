@@ -56,8 +56,20 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Deploy
-          command: /home/circleci/project/build_push_image_karsajobs.sh
+          name: Print Working Directory
+          command: pwd
+      - run:
+          name: List Files
+          command: ls -la
+      - run:
+          name: Fix Script Permissions
+          command: chmod +x ./build_push_image_karsajobs.sh
+      - run:
+          name: Verify Permissions
+          command: ls -la ./build_push_image_karsajobs.sh
+      - run:
+          name: Run Deployment Script
+          command: ./build_push_image_karsajobs.sh
 workflows:
   build-and-test:
     jobs:
