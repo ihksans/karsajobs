@@ -3,54 +3,59 @@ version: 2.1
 jobs:
   install_dependencies:
     docker:
-      - image: cimg/node:18.17 # Updated to use the latest available image
+      - image: cimg/node:18.17 
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: npm install
 
-  lint:
+  lint-dockerfile:
+  # berisi proses untuk menginstal hadolint dan menjalankannya terhadap berkas Dockerfile.
     docker:
-      - image: cimg/node:18.17
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run:
-          name: Run linter
-          command: npm run lint
+          name: Create bin directory in the home directory
+          command: mkdir -p $HOME/bin
+      - run:
+          name: Install hadolint
+          command: |
+            curl -L https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 -o $HOME/bin/hadolint
+            chmod +x $HOME/bin/hadolint
+      - run:
+          name: Add bin to PATH
+          command: echo 'export PATH=$HOME/bin:$PATH' >> $BASH_ENV
+      - run:
+          name: Lint Dockerfile
+          command: hadolint Dockerfile
 
-  test:
-    docker:
-      - image: cimg/node:18.17
+  build-app-karsajobs-ui:
+  # berisi perintah untuk build dan push image.
+    machine:
+      docker_layer_caching: true
+      resource_class: medium
     steps:
       - checkout
       - run:
-          name: Run tests
-          command: npm run test
-
-  build:
-    docker:
-      - image: cimg/node:18.17
-    steps:
-      - checkout
+          name: Fix Script Permissions
+          command: chmod +x ./build_push_image_karsajobs.sh
       - run:
-          name: Install dependencies
-          command: npm install
+          name: Verify Permissions
+          command: ls -la ./build_push_image_karsajobs.sh
       - run:
-          name: Build the application
-          command: npm run build
+          name: Run Deployment Script
+          command: ./build_push_image_karsajobs.sh
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - install_dependencies
-      - lint:
+      - lint-dockerfile:
           requires:
             - install_dependencies
-      - test:
+      - build-app-karsajobs-ui:
           requires:
-            - install_dependencies
-      - build:
-          requires:
-            - test
+            - lint-dockerfile
