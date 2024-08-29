@@ -47,25 +47,26 @@ jobs:
           path: ~/artifacts
           destination: executables
 
-lint-dockerfile:
-  docker:
-    - image: circleci/python:3.8
-  steps:
-    - checkout
-    - run:
-        name: Create bin directory in the home directory
-        command: mkdir -p $HOME/bin
-    - run:
-        name: Install hadolint
-        command: |
-          curl -L https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 -o $HOME/bin/hadolint
-          chmod +x $HOME/bin/hadolint
-    - run:
-        name: Add bin to PATH
-        command: echo 'export PATH=$HOME/bin:$PATH' >> $BASH_ENV
-    - run:
-        name: Lint Dockerfile
-        command: hadolint Dockerfile
+  lint-dockerfile:
+    # Install hadolint and run it against the Dockerfile
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: Create bin directory in the home directory
+          command: mkdir -p $HOME/bin
+      - run:
+          name: Install hadolint
+          command: |
+            curl -L https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 -o $HOME/bin/hadolint
+            chmod +x $HOME/bin/hadolint
+      - run:
+          name: Add bin to PATH
+          command: echo 'export PATH=$HOME/bin:$PATH' >> $BASH_ENV
+      - run:
+          name: Lint Dockerfile
+          command: hadolint Dockerfile
 
   test-app:
     docker:
